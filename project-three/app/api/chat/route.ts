@@ -5,19 +5,21 @@ import { AIMessage, HumanMessage } from 'langchain/schema';
 export const runtime = 'edge';
 
 export async function POST(req: Request) {
+  console.log("aaa")
   const { messages } = await req.json();
   const currentMessageContent = messages[messages.length - 1].content;
 
-  const vectorSearch = await fetch("http://localhost:3000/api/vectorSearch", {
+  const vectorSearch = await fetch("http://localhost:3001/api/vectorSearch", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: currentMessageContent,
   }).then((res) => res.json());
+  console.log(vectorSearch)
+  //If you are unsure and the answer is not explicitly written in the documentation, say "Sorry, I don't know how to help with that.
+  const TEMPLATE = `You are a very enthusiastic coder representative who loves to help people! Given the following sections from the vbFile saved as vector in embedded mongodb answer the question using only that information, outputted in text or code."
 
-  const TEMPLATE = `You are a very enthusiastic freeCodeCamp.org representative who loves to help people! Given the following sections from the freeCodeCamp.org contributor documentation, answer the question using only that information, outputted in markdown format. If you are unsure and the answer is not explicitly written in the documentation, say "Sorry, I don't know how to help with that."
-  
   Context sections:
   ${JSON.stringify(vectorSearch)}
 

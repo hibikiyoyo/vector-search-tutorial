@@ -2,6 +2,37 @@ import * as fs from "fs";
 import { Document } from 'langchain/document'
 let input = fs.readFileSync('_assets/test/frmRA_tree.txt', "utf8");
 
+export class ChunkDeeper {
+  createDocument(input, maxDepth) {
+
+    try {
+      // Parse the tree text into an AST
+      const ast = parseTreeText(input);
+      // Split the AST into chunks based on maximum depth
+      const chunks = splitAST(ast, maxDepth);
+      
+      // Print the chunks
+      // chunks.forEach((chunk, index) => {
+      //   console.log(`Chunk ${index + 1}:\n${chunk}\n`);
+      // });
+      console.log("chunks")
+      // Create documents
+      const documents = chunks.
+        filter((chunk, index) => {
+          return !(chunk.trim() == '\\r\\n')
+        })
+        .map((chunk, index) => {
+          return new Document({
+          pageContent: chunk,
+          metadata: { id: index + 1 },
+          });
+        });
+      return documents
+    } catch (error) {
+      console.error('Error parsing tree text:', error.message);
+    }
+  }
+}
 // Helper function to parse the parenthetical tree text into an AST
 function parseTreeText(text) {
     let index = 0;
@@ -76,7 +107,7 @@ function parseTreeText(text) {
   }
   
   // Function to serialize AST back to parenthetical notation
-  function serializeNode(node) {
+function serializeNode(node) {
     if (node.children.length === 0) {
       return node.label;
     }
@@ -85,7 +116,7 @@ function parseTreeText(text) {
   }
   
   // Function to split AST into chunks based on maximum depth
-  function splitAST(ast, maxDepth) {
+function splitAST(ast, maxDepth) {
     const chunks = [];
   
     function traverse(node, depth) {
@@ -115,33 +146,32 @@ function parseTreeText(text) {
       (block (blockStmt (letStmt (implicitCallStmt_InStmt (iCS_S_MembersCall (iCS_S_VariableOrProcedureCall (ambiguousIdentifier Text1)) (iCS_S_MemberCall . (iCS_S_VariableOrProcedureCall (ambiguousIdentifier (ambiguousKeyword Text))))))   =   (valueStmt (literal "Hello, world!"))))) 
    End Sub))) 
   ) <EOF>)`;
-  
-  try {
-    // Parse the tree text into an AST
-    const ast = parseTreeText(input);
-  
-    // Split the AST into chunks based on maximum depth
-    const maxDepth = 3; // Adjust as needed
-    const chunks = splitAST(ast, maxDepth);
-    
-    // Print the chunks
-    chunks.forEach((chunk, index) => {
-      console.log(`Chunk ${index + 1}:\n${chunk}\n`);
-    });
 
-    // Create documents
-    const documents = chunks.
-      filter((chunk, index) => {
-        return !(chunk.trim() == '\\r\\n')
-      })
-      .map((chunk, index) => {
-        return new Document({
-        pageContent: chunk,
-        metadata: { id: index + 1 },
-        });
-      });
-      console.log(documents)
-  } catch (error) {
-    console.error('Error parsing tree text:', error.message);
-  }
+  // try {
+  //   // Parse the tree text into an AST
+  //   const ast = parseTreeText(input);
   
+  //   // Split the AST into chunks based on maximum depth
+  //   const maxDepth = 3; // Adjust as needed
+  //   const chunks = splitAST(ast, maxDepth);
+    
+  //   // Print the chunks
+  //   chunks.forEach((chunk, index) => {
+  //     console.log(`Chunk ${index + 1}:\n${chunk}\n`);
+  //   });
+
+  //   // Create documents
+  //   const documents = chunks.
+  //     filter((chunk, index) => {
+  //       return !(chunk.trim() == '\\r\\n')
+  //     })
+  //     .map((chunk, index) => {
+  //       return new Document({
+  //       pageContent: chunk,
+  //       metadata: { id: index + 1 },
+  //       });
+  //     });
+  //     console.log("hihi")
+  // } catch (error) {
+  //   console.error('Error parsing tree text:', error.message);
+  // }

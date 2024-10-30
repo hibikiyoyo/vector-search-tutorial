@@ -7,6 +7,7 @@ import { MongoClient } from "mongodb";
 import "dotenv/config";
 import * as path from "path";
 import {ParenthesesAwareTextSplitter} from "./chunk.mjs"
+import { ChunkDeeper} from "./chunkDeeper.mjs"
 import { Document } from 'langchain/document'
 
 const client = new MongoClient(process.env.MONGODB_ATLAS_URI || "");
@@ -27,32 +28,39 @@ for (const fileName of files) {
   console.log(`Vectorizing ${fileName}`);
   
 
-  // Spliter
-  const splitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
-    chunkSize: 500,
-    chunkOverlap: 50,
-  });
+  // Using Spliter
+  // const splitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
+  //   chunkSize: 500,
+  //   chunkOverlap: 50,
+  // });
 
   // Initialize the splitter with desired chunk size and overlap
   // const splitter = new ParenthesesAwareTextSplitter({ chunkSize: 1000, chunkOverlap: 50  });
 
-  const output = await splitter.createDocuments([document]);
+  // const output = await splitter.createDocuments([document]);
+  // console.log(output)
+
+  const chunkDeeper = new ChunkDeeper()
+  console.log("aaa")
+  let output = chunkDeeper.createDocument(document, 3)
+  console.log("asfsd")
   console.log(output)
 
-  // await MongoDBAtlasVectorSearch.fromDocuments(
-  //   output,
-  //   new OpenAIEmbeddings(),
-  //   {
-  //     collection,
-  //     indexName: "default",
-  //     textKey: "text",
-  //     embeddingKey: "embedding",
-  //   }
-  // );
+
+  await MongoDBAtlasVectorSearch.fromDocuments(
+    output,
+    new OpenAIEmbeddings(),
+    {
+      collection,
+      indexName: "default",
+      textKey: "text",
+      embeddingKey: "embedding",
+    }
+  );
 }
 
-// console.log("Done: Closing Connection");
-// await client.close();
+console.log("Done: Closing Connection");
+await client.close();
 
 function getAllFiles(directory, extensions) {
   let files = [];

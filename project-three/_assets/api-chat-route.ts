@@ -5,10 +5,11 @@ import { AIMessage, HumanMessage } from "langchain/schema";
 export const runtime = "edge";
 
 export async function POST(req: Request) {
+  console.log("api")
   const { messages } = await req.json();
   const currentMessageContent = messages[messages.length - 1].content;
 
-  const vectorSearch = await fetch("http://localhost:3000/api/vectorSearch", {
+  const vectorSearch = await fetch("http://localhost:3001/api/vectorSearch", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
