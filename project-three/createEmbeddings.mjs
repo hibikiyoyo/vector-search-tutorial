@@ -16,7 +16,7 @@ const collectionName = "embeddings";
 const collection = client.db(dbName).collection(collectionName);
 
 // filter files with extensions
-const extensions = /\.(txt|frm|cls)$/i;
+const extensions = /\.(txt|frm|cls|md)$/i;
 const docs_dir = "_assets";
 let files = getAllFiles(docs_dir, extensions)
 
@@ -25,27 +25,17 @@ let files = getAllFiles(docs_dir, extensions)
 for (const fileName of files) {
   const document = await fsp.readFile(`${fileName}`, "utf8");
   // console.log(document)
-  console.log(`Vectorizing ${fileName}`);
   
+  console.log(`Vectorizing ${fileName}`);
+  let extension = fileName.split('.').pop();
+  let output = ''
+  if (extension === "md") {
+    output = await makeDocumentForMd(document)
+  } else {
+    output = makeDocument(document)
+  }
 
-  // Using Spliter
-  // const splitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
-  //   chunkSize: 500,
-  //   chunkOverlap: 50,
-  // });
-
-  // Initialize the splitter with desired chunk size and overlap
-  // const splitter = new ParenthesesAwareTextSplitter({ chunkSize: 1000, chunkOverlap: 50  });
-
-  // const output = await splitter.createDocuments([document]);
   // console.log(output)
-
-  const chunkDeeper = new ChunkDeeper()
-  console.log("aaa")
-  let output = chunkDeeper.createDocument(document, 3)
-  console.log("asfsd")
-  console.log(output)
-
 
   await MongoDBAtlasVectorSearch.fromDocuments(
     output,
@@ -75,4 +65,21 @@ function getAllFiles(directory, extensions) {
   });
 
   return files;
+}
+
+function makeDocument(document) {
+  const chunkDeeper = new ChunkDeeper()
+  const output = chunkDeeper.createDocument(document, 3)
+  return output
+}
+
+async function makeDocumentForMd(document) {
+  // Using Spliter
+  const splitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
+    chunkSize: 500,
+    chunkOverlap: 50,
+  });
+
+  const output = await splitter.createDocuments([document]);
+  return output
 }
