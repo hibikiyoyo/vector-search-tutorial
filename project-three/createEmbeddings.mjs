@@ -6,9 +6,7 @@ import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { MongoClient } from "mongodb";
 import "dotenv/config";
 import * as path from "path";
-import {ParenthesesAwareTextSplitter} from "./chunk.mjs"
 import { ChunkDeeper} from "./chunkDeeper.mjs"
-import { Document } from 'langchain/document'
 
 const client = new MongoClient(process.env.MONGODB_ATLAS_URI || "");
 const dbName = "docs";
@@ -35,7 +33,7 @@ for (const fileName of files) {
     output = makeDocument(document)
   }
 
-  // console.log(output)
+  console.log(output)
 
   await MongoDBAtlasVectorSearch.fromDocuments(
     output,

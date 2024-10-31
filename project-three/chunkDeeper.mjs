@@ -1,6 +1,4 @@
-import * as fs from "fs";
 import { Document } from 'langchain/document'
-let input = fs.readFileSync('_assets/test/frmRA_tree.txt', "utf8");
 
 export class ChunkDeeper {
   createDocument(input, maxDepth) {
@@ -15,7 +13,7 @@ export class ChunkDeeper {
       // chunks.forEach((chunk, index) => {
       //   console.log(`Chunk ${index + 1}:\n${chunk}\n`);
       // });
-      console.log("chunks")
+      // console.log("chunks")
       // Create documents
       const documents = chunks.
         filter((chunk, index) => {
