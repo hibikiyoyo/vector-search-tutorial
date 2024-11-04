@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   }).then((res) => res.json());
   console.log(vectorSearch)
   //If you are unsure and the answer is not explicitly written in the documentation, say "Sorry, I don't know how to help with that.
-  const TEMPLATE = `You are a very enthusiastic coder representative who loves to help people! Given the following sections from the vbFile saved as vector in embedded mongodb answer the question using only that information, outputted in text or code."
+  const TEMPLATE = `You are a very enthusiastic coder representative who loves to help people! Given the following sections from the vbFile saved as vector in embedded mongodb answer the question using that information like the base knowledge, outputted in text or code. If you are not sure about the answer, then you can reseach in the internet for helping you to make the better answer."
 
   Context sections:
   ${JSON.stringify(vectorSearch)}
