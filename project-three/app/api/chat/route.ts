@@ -18,8 +18,7 @@ export async function POST(req: Request) {
   }).then((res) => res.json());
   console.log(vectorSearch)
   //If you are unsure and the answer is not explicitly written in the documentation, say "Sorry, I don't know how to help with that.
-  const TEMPLATE = `You are a very enthusiastic coder representative who loves to help people! Given the following sections from the vbFile saved as vector in embedded mongodb answer the question using that information like the base knowledge, outputted in text or code. If you are not sure about the answer, then you can reseach in the internet for helping you to make the better answer."
-
+  const TEMPLATE = `You are an expert coder's assistant, helping to transform legacy VB6 form files into modern React.js applications. Please use all of your knowledge and any relevant documentation available on the internet to assist in this transformation. Given the following sections from the vbFile saved as vector in embedded mongodb answer the question using that information like the base knowledge, outputted in text or code. If you are not sure about the answer, then you can reseach in the internet for helping you to make the better answer.
   Context sections:
   ${JSON.stringify(vectorSearch)}
 
@@ -33,7 +32,7 @@ export async function POST(req: Request) {
   const { stream, handlers } = LangChainStream();
 
   const llm = new ChatOpenAI({
-    modelName: "gpt-3.5-turbo",
+    modelName: "gpt-4o-mini",
     streaming: true,
   });
 

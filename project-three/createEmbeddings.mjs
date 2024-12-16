@@ -6,16 +6,17 @@ import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { MongoClient } from "mongodb";
 import "dotenv/config";
 import * as path from "path";
-import { ChunkDeeper} from "./chunkDeeper.mjs"
+import { ChunkDeeper} from "./chunkDeeper.mjs";
+import iconv from "iconv-lite";
 
 const client = new MongoClient(process.env.MONGODB_ATLAS_URI || "");
 const dbName = "docs";
-const collectionName = "embeddings";
+const collectionName = "vb6";
 const collection = client.db(dbName).collection(collectionName);
 
 // filter files with extensions
-const extensions = /\.(txt|frm|cls|md)$/i;
-const docs_dir = "_assets";
+const extensions = /\.(txt|frm|cls|md|bas|vbp)$/i;
+const docs_dir = "test";
 let files = getAllFiles(docs_dir, extensions)
 
 // const fileNames = await fsp.readdir(docs_dir);
@@ -23,18 +24,23 @@ let files = getAllFiles(docs_dir, extensions)
 for (const fileName of files) {
   const document = await fsp.readFile(`${fileName}`, "utf8");
   // console.log(document)
+  const document_jp = iconv.decode(document, 'shift_jis');
   
+  
+  console.log(`Vectorizing ${fileName}`);
+
   console.log(`Vectorizing ${fileName}`);
   let extension = fileName.split('.').pop();
   let output = ''
-  if (extension === "md") {
-    output = await makeDocumentForMd(document)
-  } else {
-    output = makeDocument(document)
-  }
+  output = await makeDocumentForMd(document_jp)
+  // if (extension === "md") {
+  //   // output = await makeDocumentForMd(document_jp)
+  // } else {
+  //   output = makeDocument(document_jp)
+  // }
 
   console.log(output)
-
+  // continue;
   await MongoDBAtlasVectorSearch.fromDocuments(
     output,
     new OpenAIEmbeddings(),
@@ -74,8 +80,8 @@ function makeDocument(document) {
 async function makeDocumentForMd(document) {
   // Using Spliter
   const splitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
-    chunkSize: 500,
-    chunkOverlap: 50,
+    chunkSize: 3000,
+    chunkOverlap: 300,
   });
 
   const output = await splitter.createDocuments([document]);

@@ -1,0 +1,11 @@
+basCL0259 = 61, 173, 884, 878, 
+basMainFunc = 132, 132, 722, 500, C
+basMsgFunc = 88, 88, 643, 507, 
+basGeneral = 0, 0, 0, 0, C
+basInputCheck = 0, 0, 0, 0, C
+basDBFunc = 0, 0, 0, 0, C
+basOraFunc = 0, 0, 0, 0, C
+basComboCreate = 88, 88, 741, 507, C
+frmLogin = 66, 66, 810, 602, , 110, 110, 657, 521, C
+basFileSystemObject = 110, 145, 1049, 652, 
+frmCL0259 = 66, 66, 911, 669, , 44, 44, 599, 463, C
